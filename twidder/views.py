@@ -15,14 +15,6 @@ def after_request(exception):
 def root():
     return app.send_static_file("client.html")
 
-# @app.route('/api')
-# def api():
-#     if request.environ.get('wsgi.websocket'):
-#         ws = request.environ['wsgi.websocket']
-#         while True:
-#             message = ws.receive()
-#             ws.send(message)
-#     return ''
 
 @app.route('/user/get/signIn/<email>/<password>', methods = ['GET'])
 def signIn(email, password):
@@ -175,5 +167,3 @@ def get_user_message_by_email(email):
 
 if __name__ =='__main__':
     app.run(debug=True)
-    http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
-    http_server.serve_forever()
