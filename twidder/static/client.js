@@ -20,6 +20,53 @@ window.onload = function() {
   displayView();
 };
 
+function connect_socket()
+{
+  var connection = new WebSocket("ws://127.0.0.1:5000/api");
+  console.log("connection is open");
+
+  connection.onopen = function()
+  {
+    var message = {'token': localStorage.getItem('token')};
+    console.log("in onopen function");
+
+    if(msg !== undefined)
+    {
+      console.log(msg["token"]);
+      console.log("should print message");
+
+      socket.send(JSON.stringify(msg ));
+    }
+  };
+
+  connection.onmessage = function(event)
+  {
+    var message = JSON.parse(event.data);
+    if(msg.success == false && msg.message == "logout" )
+    {
+      console.log("Sent false message with logout!");
+
+      connection.onclose();
+    }
+    else
+    {
+      console.log("Successfully signed in!");
+    }
+  };
+
+  connection.onclose = function()
+  {
+    console.log("Successfully closed connection!");
+
+    logOut();
+    displayView();
+  };
+
+  connection.onerror = function(){
+    console.log("Error in websocket");
+  };
+};
+
 function passwordCheck(password1, password2) {
   if(password1.value != password2.value)
   {
@@ -66,12 +113,10 @@ function sendMessage(msg, email, div_id){
       else if(request.status == 404)
       {
         document.getElementById("output").innerHTML = "<h3>No such user!</h3>"
-
       }
     }
 
   }
-  console.log(messages.toEmail);
   request.send(JSON.stringify(messages));
 }
 
@@ -186,7 +231,6 @@ signUpValidation = function(DataObject){
 }
 
 signInValidation = function(email, password){
-
   let request = new XMLHttpRequest();
   request.open("GET", "/user/get/signIn/" + email.value +"/" + password.value, true);
   request.onreadystatechange = function(){
@@ -196,6 +240,7 @@ signInValidation = function(email, password){
         token = request.getResponseHeader('Authorization');
         localStorage.setItem("token", token);
         console.log("before");
+        connect_socket();
         console.log("after");
         displayView();
       }
