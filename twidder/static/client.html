@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+  <head>
+    <title>
+      Twidder
+    </title>
+      <link rel="shortcut icon" href="../static/favicon.png" />
+      <link href="static/client.css" type="text/css" rel="stylesheet">
+      <script src="static/client.js" type="text/javascript"></script>
+      <script src="static/serverstub.js" type="text/javascript"></script>
+      <script type="text/view" id="WelcomeScript">
+        <div class="grid-container">
+          <div class="item1" id = "output"></div>
+          <div class="item2">
+            <form >
+            <div class= row>
+                <pretext>Email</pretext>
+                <input type="email" id="email" name="email" class="text-box" required></input>
+            </div>
+            <div class= row>
+                <pretext>Password</pretext>
+                <input type="password" id="password" name="password" class="text-box" required></input>
+            </div>
+                <input type="submit" onclick = "signInValidation(email,password)" value="Log in" class="btn-holder"></input>
+            </form>
+          </div>
+          <div class="item3">
+            <header class="header-class">
+              Sign Up Here
+            </header>
+              <form onsubmit="signUpValidation(this); return false;">
+                <div class= row>
+                  <pretext>First name</pretext>
+                  <input type="text" id="firstname" name="firstname" class="text-box" required></input>
+                </div>
+
+                <div class= row>
+                  <pretext >Family name</pretext>
+                  <input type="text" id="familyname" name="familyname" class="text-box" required></input>
+                </div>
+
+                <div class= row>
+                  <pretext >Gender</pretext>
+                  <select name="gender" class="dropdown-holder" id="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div class= row>
+                  <pretext >City</pretext>
+                  <input type="text" id="city" name="city" class="text-box" required></input>
+                </div>
+
+                <div class= row>
+                  <pretext >Country</pretext>
+                  <input type="text" id="country" name="country" class="text-box" required></input>
+                </div>
+
+                <div class= row>
+                  <pretext >Email</pretext>
+                  <input type="email" id="sign_up_email" name="email" class="text-box" required></input>
+                </div>
+
+                <div class= row>
+                  <pretext  for="password1">Password</pretext>
+                  <input type="password" id="password1" minlength="2" name="password1" class="text-box" required></input>
+                </div>
+
+                <div class= row>
+                  <pretext for="password2">Repeat PSW</pretext>
+                  <input type="password" oninput="passwordCheck(password1,this)" id="password2" name="password2" class="text-box" required></input>
+                </div>
+                  <input type="submit" value="signUp" class="btn-holder"></input >
+              </form>
+          </div>
+        </div>
+      </script>
+      <script type="text/view" id="ProfileScript">
+        <h1>TWIDDER</h1>
+        <div id = "output"></div>
+          <div class="tab">
+            <button class="tablinks active" onclick="openTab(event, 'Home')" id="defaultOpen">Home</button>
+            <button class="tablinks" onclick="openTab(event, 'Browse')">Browse</button>
+            <button class="tablinks" onclick="openTab(event, 'Account')">Account</button>
+          </div>
+
+          <div id="Home" class="tabcontent" style="display:block">
+            <div class ="left-home">
+            <h2>Home</h2>
+                <div class="information-class" id="personalInfo">
+                </div>
+                <div class="post-class">
+                  <pretext>Post messages here!</pretext>
+                  <textarea id="msg" class="post-box"></textarea>
+                  <button onclick="sendMessage(msg,null,'messageinfo')" class="btn-holder">Send post!</button>
+                </div>
+            </div>
+            <div class ="right-home">
+              <h1>WALL</h1>
+              <button onclick="printWall(null, 'messageinfo')" class="btn-holder">Refresh!</button>
+              <div class="message-class" id="messageinfo">
+              </div>
+
+            </div>
+          </div>
+
+          <div id="Browse" class="tabcontent">
+
+            <div class ="left-home">
+            <h2>Browse</h2>
+
+              <accounttext>Search for user!</accounttext>
+              <input type="email" id="searchemail" name="email" class="account-box" required></input>
+              <button onclick="searchUser(searchemail, 'searchInfo', 'searchWall')">Search</button>
+                  <div class="information-class" id="searchInfo"></div>
+                  <div class="post-class">
+                    <pretext>Post messages here!</pretext>
+                    <textarea id="searchmsg" class="post-box"></textarea>
+                    <button onclick="sendMessage(searchmsg,searchemail,'searchWall')" class="btn-holder">Send post!</button>
+                  </div>
+            </div>
+            <div class ="right-home">
+              <h1>WALL</h1>
+              <button onclick="printWall(searchemail, 'searchWall')" class="btn-holder">Refresh!</button>
+              <div class="message-class" id="searchWall">
+              </div>
+
+            </div>
+          </div>
+
+          <div id="Account" class="tabcontent">
+            <h2>Account</h2>
+            <div class="medium-div">
+              <form>
+                  <accounttext>Old password</accounttext>
+                  <input type="password" id="oldPassword" name="oldPassword" class="account-box" required></input>
+                  <accounttext>New password</accounttext>
+                  <input type="password" id="newPassword1" name="newPassword1" minlength="2" class="account-box" required></input>
+
+                  <accounttext>Repeat new password</accounttext>
+                  <input type="password" id="newPassword2" name="newPassword2" class="account-box" required></input>
+
+                  <button onclick="changePassword(oldPassword,newPassword1,newPassword2); return false;" class="btn-account">Change password</input>
+              </form>
+            </div>
+            <button onclick="logOut()">Logout </button>
+          </div>
+
+      </script>
+
+  </head>
+  <body>
+    <div id="myDivId"></div>
+  </body>
+</html>
