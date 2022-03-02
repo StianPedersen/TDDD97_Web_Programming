@@ -123,12 +123,10 @@ function logOut(){
 
  let request = new XMLHttpRequest();
  request.open("PUT", "/user/put/signOut", true);
- request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
  request.setRequestHeader('Authorization', localStorage.getItem('token'));
  request.onreadystatechange = function(){
    if(request.readyState == 4){
      if(request.status == 200){
-       document.getElementById("output").innerHTML = "<h3>Successfully signed out!</h3>"
        localStorage.removeItem('token');
        displayView();
      }
@@ -202,12 +200,18 @@ signInValidation = function(email, password){
         displayView();
       }
       else if(request.status == 400){
+        console.log("kommer hit 1");
+
         document.getElementById("output").innerHTML = "<h3>Email or password is missing!</h3>"
       }
       else if(request.status == 401){
+        console.log("kommer hit 2");
+
         document.getElementById("output").innerHTML = "<h3>Wrong email or password!</h3>"
       }
       else if(request.status == 500){
+        console.log("kommer hit 3");
+
         document.getElementById("output").innerHTML = "<h3>Ops! Something serious went wrong!</h3>"
       }
     }

@@ -5,8 +5,6 @@ from twidder import app
 from gevent.pywsgi import WSGIServer
 from geventwebsocket.handler import WebSocketHandler
 
-app = Flask(__name__)
-
 @app.teardown_request
 def after_request(exception):
     data_handler.disconnect_db()
