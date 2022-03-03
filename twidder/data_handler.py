@@ -2,7 +2,7 @@
 import sqlite3
 from flask import g,jsonify
 
-DATABASE_URI = 'twidder/database.db'
+DATABASE_URI = 'database.db'
 
 def get_db():
     db = getattr(g, 'db', None)

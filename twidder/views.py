@@ -2,40 +2,41 @@ from flask import Flask, jsonify, request, make_response, render_template
 from twidder import data_handler
 import random
 from twidder import app
-from gevent.pywsgi import WSGIServer
-from geventwebsocket.handler import WebSocketHandler
+
 
 @app.teardown_request
 def after_request(exception):
     data_handler.disconnect_db()
 
-@app.route("/")
+@app.route("/", methods=['GET'])
 def root():
     return app.send_static_file("client.html")
 
-active_sockets = dict()
-@app.route("/api")
-def api():
-    if request.environ.get('wsgi.websocket'):
-        ws = request.environ['wsgi.websocket']
-        msg = ws.recieve()
-        data = json.loads(msg)
 
-        token = data["token"]
-        id = data_handler.tokenToEmail(token)
-
-        if id in active_sockets:
-                old_active_sockets = active_sockets[id]
-                old_active_sockets.send(json.dumps({"success": False, "message":"logout"}))
-        active_sockets[id] = ws
-        ws.send(json.dumps({"success": True, "msg":"Welcome"}))
-        #Enter while loop and call ws.receive to not close the socket
-        while True:
-            obj = ws.receive()
-            if obj == None:
-                ws.close()
-                return ''
-    return ''
+# app = Flask(__name__)
+app.debug = True
+#active_sockets = dict()
+# @app.route("/api")
+# def api():
+#     if request.environ.get('wsgi.websocket'):
+#         ws = request.environ['wsgi.websocket']
+#         msg = ws.recieve()
+#         data = json.loads(msg)
+#
+#         token = data["token"]
+#         id = data_handler.tokenToEmail(token)
+#
+#         if id in active_sockets:
+#                 old_active_sockets = active_sockets[id]
+#                 old_active_sockets.send(json.dumps({"success": False, "message":"logout"}))
+#         active_sockets[id] = ws
+#         ws.send(json.dumps({"success": True, "msg":"Welcome"}))
+#         while True:
+#             obj = ws.receive()
+#             if obj == None:
+#                 ws.close()
+#                 return
+#     return
 
 @app.route('/user/get/signIn/<email>/<password>', methods = ['GET'])
 def signIn(email, password):
@@ -187,6 +188,6 @@ def get_user_message_by_email(email):
 
 
 if __name__ =='__main__':
-    app.run(debug=True)
-    http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
-    http_server.serve_forever()
+    app.run()
+    # http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
+    # http_server.serve_forever()

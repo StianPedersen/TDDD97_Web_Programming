@@ -20,52 +20,50 @@ window.onload = function() {
   displayView();
 };
 
-function connect_socket()
-{
-  var connection = new WebSocket("ws://127.0.0.1:5000/api");
-  console.log("connection is open");
-
-  connection.onopen = function()
-  {
-    var message = {'token': localStorage.getItem('token')};
-    console.log("in onopen function");
-
-    if(msg !== undefined)
-    {
-      console.log(msg["token"]);
-      console.log("should print message");
-
-      socket.send(JSON.stringify(msg ));
-    }
-  };
-
-  connection.onmessage = function(event)
-  {
-    var message = JSON.parse(event.data);
-    if(msg.success == false && msg.message == "logout" )
-    {
-      console.log("Sent false message with logout!");
-
-      connection.onclose();
-    }
-    else
-    {
-      console.log("Successfully signed in!");
-    }
-  };
-
-  connection.onclose = function()
-  {
-    console.log("Successfully closed connection!");
-
-    logOut();
-    displayView();
-  };
-
-  connection.onerror = function(){
-    console.log("Error in websocket");
-  };
-};
+// function connect_socket()
+// {
+//   var connection = new WebSocket("ws://"+ document.domain + ":5000/api");
+//   console.log("connection is open");
+//
+//   connection.onopen = function()
+//   {
+//     var message = {'token': localStorage.getItem('token')};
+//     console.log("in onopen function");
+//
+//     if(message !== undefined)
+//     {
+//       console.log(message["token"]);
+//       console.log("should print message");
+//       // socket.send(JSON.stringify(message));
+//     }
+//   };
+//
+//   connection.onmessage = function(event)
+//   {
+//     var message = JSON.parse(event.data);
+//     if(message.success == false && message.message == "logout" )
+//     {
+//       console.log("Sent false message with logout!");
+//
+//       connection.onclose();
+//     }
+//     else
+//     {
+//       console.log("Successfully signed in!");
+//     }
+//   };
+//
+//   // connection.onclose = function()
+//   // {
+//   //   console.log("Successfully closed connection!");
+//   //   logOut();
+//   //   displayView();
+//   // };
+//
+//   connection.onerror = function(){
+//     console.log("Error in websocket");
+//   };
+// };
 
 function passwordCheck(password1, password2) {
   if(password1.value != password2.value)
@@ -239,24 +237,16 @@ signInValidation = function(email, password){
         document.getElementById("output").innerHTML = "<h3>Signed in!</h3>"
         token = request.getResponseHeader('Authorization');
         localStorage.setItem("token", token);
-        console.log("before");
-        connect_socket();
-        console.log("after");
         displayView();
       }
       else if(request.status == 400){
-        console.log("kommer hit 1");
-
         document.getElementById("output").innerHTML = "<h3>Email or password is missing!</h3>"
       }
       else if(request.status == 401){
-        console.log("kommer hit 2");
-
         document.getElementById("output").innerHTML = "<h3>Wrong email or password!</h3>"
       }
-      else if(request.status == 500){
-        console.log("kommer hit 3");
 
+      else if(request.status == 500){
         document.getElementById("output").innerHTML = "<h3>Ops! Something serious went wrong!</h3>"
       }
     }
