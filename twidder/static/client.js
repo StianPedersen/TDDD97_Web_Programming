@@ -23,25 +23,30 @@ window.onload = function() {
 function connect_socket()
 {
   console.log("trying to connect");
-  var connection = new WebSocket("ws://"+ document.domain + ":5000/api");
+  var connection = new WebSocket("ws://"+ document.domain + ":5000/echo");
 
 
   connection.onopen = function()
   {
     console.log('connection open');
+    token = localStorage.getItem('token');
+    connection.send(token);
   };
 
   connection.onmessage = function(e)
   {
     console.log('Server: ' + e.data);
+    if(e.data == 'Logout')
+    {
+      logOut();
+    }
   };
 
   connection.onclose = function()
   {
     console.log("Successfully closed connection!");
   };
-
-  connection.onerror = function(event){
+    connection.onerror = function(event){
     console.log("Error in websocket",event);
   };
 };
@@ -224,9 +229,7 @@ signInValidation = function(email, password){
         token = request.getResponseHeader('Authorization');
 
         localStorage.setItem("token", token);
-        console.log("before");
         connect_socket();
-        console.log("after");
         displayView();
       }
       else if(request.status == 400){

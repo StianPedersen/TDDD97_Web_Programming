@@ -1,11 +1,14 @@
 from flask import Flask, jsonify, request, make_response, render_template
+from flask_sock import Sock
 import data_handler
 import random
+
 #from twidder import app
-from gevent.pywsgi import WSGIServer
-from geventwebsocket.handler import WebSocketHandler
+
 
 app = Flask(__name__)
+sock = Sock(app)
+sockets = []
 
 @app.teardown_request
 def after_request(exception):
@@ -16,35 +19,21 @@ def root():
     return render_template("client.html")
 
 
+@sock.route('/echo')
+def echo(sock):
+    token = sock.receive()
+    email = data_handler.tokenToEmail(token)
 
-active_sockets = dict()
-@app.route("/api")
-def api():
-    if request.environ.get('wsgi.websocket'):
-         ws = request.environ['wsgi.websocket']
-         ws.open()
-         while True:
-             message = ws.recieve()
-             ws.send(message)
-         ws.close()
-    return
-         #msg = ws.recieve()
-         #data = json.loads(msg)
-    #
-    #     token = data["token"]
-    #     id = data_handler.tokenToEmail(token)
-    #
-    #     if id in active_sockets:
-    #             old_active_sockets = active_sockets[id]
-    #             old_active_sockets.send(json.dumps({"success": False, "message":"logout"}))
-    #     active_sockets[id] = ws
-    #     ws.send(json.dumps({"success": True, "msg":"Welcome"}))
-    #     while True:
-    #         obj = ws.receive()
-    #         if obj == None:
-    #             ws.close()
-    #             return
-    #return
+    if email in sockets:
+         sock.send('Logout')
+         sock.close()
+    else:
+        sockets.append({'sock' : sock, 'email' : email})
+        sock.send('Socket has been saved')
+    while True:
+        data = sock.receive()
+        sock.send(data)
+
 
 @app.route('/user/post/signIn', methods = ['POST'])
 def signIn():
@@ -196,10 +185,11 @@ def get_user_message_by_email(email):
         return "{}", 401
 
 
-def run_server():
-    app.debug = True
-    http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
-    http_server.serve_forever()
+# def run_server():
+#     app.debug = True
+#     http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
+#     http_server.serve_forever()
 
 if __name__ =='__main__':
-    run_server()
+    app.debug = True
+    app.run()
