@@ -115,6 +115,7 @@ function searchUser(email, div_id, div_id2){
       if(request.status == 200){
         printInfo(email.value, div_id);
         printWall(email.value, div_id2);
+        document.getElementById("output").innerHTML = ""
       }
       else if(request.status == 400){
         document.getElementById("output").innerHTML = "<h3>No such user!</h3>"
@@ -145,7 +146,7 @@ function openTab(evt, tabName){
 
   document.getElementById(tabName).style.display = "block";
   evt.currentTarget.className += " active";
-
+  document.getElementById("output").innerHTML = ""
 }
 
 function logOut(){
@@ -193,7 +194,8 @@ signUpValidation = function(DataObject){
           document.getElementById("output").innerHTML = "<h3>User created!</h3>"
           token = request.getResponseHeader('Authorization');
           localStorage.setItem("token", token);
-          displayView();
+          signInValidation(DataObject.sign_up_email, DataObject.password1);
+          //displayView();
         }
         else if(request.status == 400){
           document.getElementById("output").innerHTML = "<h3>Ops!!</h3>"
@@ -311,6 +313,7 @@ printInfo = function(email, div_id){
         "<br/>City: " + result.city +
         "<br/>Country: " + result.country +
         "<br/>Gender: " + result.gender;
+        document.getElementById("output").innerHTML = ""
       }
       else if(request.status == 400)
       {
@@ -351,10 +354,7 @@ printWall = function(email, div_id){
           output = output + "<h4>From: " +c.From + " message: " + c.msg +"</h4>";
         })
         div.innerHTML = output;
-      }
-      else if(request.status == 400)
-      {
-        div.innerHTML = "<h3>No messages!</h3>"
+        document.getElementById("output").innerHTML = ""
       }
       else if(request.status == 401)
       {

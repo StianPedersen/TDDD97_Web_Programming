@@ -8,7 +8,7 @@ import random
 
 app = Flask(__name__)
 sock = Sock(app)
-sockets = []
+sockets = {}
 
 @app.teardown_request
 def after_request(exception):
@@ -25,11 +25,14 @@ def echo(sock):
     email = data_handler.tokenToEmail(token)
 
     if email in sockets:
-         sock.send('Logout')
-         sock.close()
+         sockets[email].send('Logout')
+         sockets[email].close()
+         sockets[email]=sock;
     else:
-        sockets.append({'sock' : sock, 'email' : email})
+        sockets[email]=sock;
         sock.send('Socket has been saved')
+    for f in sockets:
+        print(f)
     while True:
         data = sock.receive()
         sock.send(data)
@@ -77,6 +80,7 @@ def signUp():
                 result = data_handler.create_user(json['email'], json['password'],
                 json['firstname'], json['familyname'], json['gender'],
                 json['city'], json['country'])
+                print(result)
                 if result:
                     return "{}", 201
                 else:
@@ -177,10 +181,7 @@ def get_user_message_by_email(email):
         result = []
         for row in rows:
             result.append({"From" : row[0], "To" : row[1], "msg" : row[2]})
-        if len(result) > 0:
-            return jsonify(result), 200
-        else:
-            return "{}", 400
+        return jsonify(result), 200
     else:
         return "{}", 401
 
