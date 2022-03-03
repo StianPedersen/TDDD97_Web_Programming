@@ -1,53 +1,60 @@
 from flask import Flask, jsonify, request, make_response, render_template
-from twidder import data_handler
+import data_handler
 import random
-from twidder import app
+#from twidder import app
+from gevent.pywsgi import WSGIServer
+from geventwebsocket.handler import WebSocketHandler
 
+app = Flask(__name__)
 
 @app.teardown_request
 def after_request(exception):
     data_handler.disconnect_db()
 
-@app.route("/", methods=['GET'])
+@app.route("/")
 def root():
-    return app.send_static_file("client.html")
+    return render_template("client.html")
 
 
-# app = Flask(__name__)
-app.debug = True
-#active_sockets = dict()
-# @app.route("/api")
-# def api():
-#     if request.environ.get('wsgi.websocket'):
-#         ws = request.environ['wsgi.websocket']
-#         msg = ws.recieve()
-#         data = json.loads(msg)
-#
-#         token = data["token"]
-#         id = data_handler.tokenToEmail(token)
-#
-#         if id in active_sockets:
-#                 old_active_sockets = active_sockets[id]
-#                 old_active_sockets.send(json.dumps({"success": False, "message":"logout"}))
-#         active_sockets[id] = ws
-#         ws.send(json.dumps({"success": True, "msg":"Welcome"}))
-#         while True:
-#             obj = ws.receive()
-#             if obj == None:
-#                 ws.close()
-#                 return
-#     return
 
-@app.route('/user/get/signIn/<email>/<password>', methods = ['GET'])
-def signIn(email, password):
-    if email and password is not None:
-            db_pass = data_handler.get_password(email)
-            if db_pass == password:
+active_sockets = dict()
+@app.route("/api")
+def api():
+    if request.environ.get('wsgi.websocket'):
+         ws = request.environ['wsgi.websocket']
+         while True:
+             message = ws.recieve()
+             ws.send(message)
+    return
+         #msg = ws.recieve()
+         #data = json.loads(msg)
+    #
+    #     token = data["token"]
+    #     id = data_handler.tokenToEmail(token)
+    #
+    #     if id in active_sockets:
+    #             old_active_sockets = active_sockets[id]
+    #             old_active_sockets.send(json.dumps({"success": False, "message":"logout"}))
+    #     active_sockets[id] = ws
+    #     ws.send(json.dumps({"success": True, "msg":"Welcome"}))
+    #     while True:
+    #         obj = ws.receive()
+    #         if obj == None:
+    #             ws.close()
+    #             return
+    #return
+
+@app.route('/user/post/signIn', methods = ['POST'])
+def signIn():
+    json=request.get_json()
+    if "Email" in json and "Password" in json:
+            db_pass = data_handler.get_password(json["Email"])
+            if db_pass == json["Password"]:
                 letters = "abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
                 token = "";
                 for i in range(36):
                     token += letters[random.randint(0,len(letters)-1)]
-                if(data_handler.create_loggedinuser(token, email)):
+                if(data_handler.create_loggedinuser(token, json["Email"])):
                     response = make_response();
                     response.headers["Authorization"] = token
                     return response, 201 ## Skicka token via Authorization i lab 3
@@ -80,7 +87,7 @@ def signUp():
                 json['firstname'], json['familyname'], json['gender'],
                 json['city'], json['country'])
                 if result:
-                    return signIn(json['email'], json['password'])
+                    return "{}", 201
                 else:
                     return "{}", 500
         else:
@@ -187,7 +194,10 @@ def get_user_message_by_email(email):
         return "{}", 401
 
 
+def run_server():
+    app.debug = True
+    http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
+    http_server.serve_forever()
+
 if __name__ =='__main__':
-    app.run()
-    # http_server = WSGIServer(('', 5000), app, handler_class=WebSocketHandler)
-    # http_server.serve_forever()
+    run_server()

@@ -20,50 +20,31 @@ window.onload = function() {
   displayView();
 };
 
-// function connect_socket()
-// {
-//   var connection = new WebSocket("ws://"+ document.domain + ":5000/api");
-//   console.log("connection is open");
-//
-//   connection.onopen = function()
-//   {
-//     var message = {'token': localStorage.getItem('token')};
-//     console.log("in onopen function");
-//
-//     if(message !== undefined)
-//     {
-//       console.log(message["token"]);
-//       console.log("should print message");
-//       // socket.send(JSON.stringify(message));
-//     }
-//   };
-//
-//   connection.onmessage = function(event)
-//   {
-//     var message = JSON.parse(event.data);
-//     if(message.success == false && message.message == "logout" )
-//     {
-//       console.log("Sent false message with logout!");
-//
-//       connection.onclose();
-//     }
-//     else
-//     {
-//       console.log("Successfully signed in!");
-//     }
-//   };
-//
-//   // connection.onclose = function()
-//   // {
-//   //   console.log("Successfully closed connection!");
-//   //   logOut();
-//   //   displayView();
-//   // };
-//
-//   connection.onerror = function(){
-//     console.log("Error in websocket");
-//   };
-// };
+function connect_socket()
+{
+  console.log("trying to connect");
+  var connection = new WebSocket("ws://"+ document.domain + ":5000/api");
+
+
+  connection.onopen = function()
+  {
+    console.log('connection open');
+  };
+
+  connection.onmessage = function(e)
+  {
+    console.log('Server: ' + e.data);
+  };
+
+  connection.onclose = function()
+  {
+    console.log("Successfully closed connection!");
+  };
+
+  connection.onerror = function(event){
+    console.log("Error in websocket",event);
+  };
+};
 
 function passwordCheck(password1, password2) {
   if(password1.value != password2.value)
@@ -230,13 +211,22 @@ signUpValidation = function(DataObject){
 
 signInValidation = function(email, password){
   let request = new XMLHttpRequest();
-  request.open("GET", "/user/get/signIn/" + email.value +"/" + password.value, true);
+  request.open("POST", "/user/post/signIn" , true);
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  let credentials = {
+    Email: email.value,
+    Password: password.value
+  }
   request.onreadystatechange = function(){
     if(request.readyState == 4){
       if(request.status == 201){
         document.getElementById("output").innerHTML = "<h3>Signed in!</h3>"
         token = request.getResponseHeader('Authorization');
+
         localStorage.setItem("token", token);
+        console.log("before");
+        connect_socket();
+        console.log("after");
         displayView();
       }
       else if(request.status == 400){
@@ -251,7 +241,7 @@ signInValidation = function(email, password){
       }
     }
   }
-  request.send(null);
+  request.send(JSON.stringify(credentials));
 }
 
 changePassword = function(oldPassword,newPassword1,newPassword2){
@@ -361,7 +351,7 @@ printWall = function(email, div_id){
       }
       else if(request.status == 400)
       {
-        document.getElementById("output").innerHTML = "<h3>User does not exist!</h3>"
+        div.innerHTML = "<h3>No messages!</h3>"
       }
       else if(request.status == 401)
       {
