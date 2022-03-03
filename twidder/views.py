@@ -22,9 +22,11 @@ active_sockets = dict()
 def api():
     if request.environ.get('wsgi.websocket'):
          ws = request.environ['wsgi.websocket']
+         ws.open()
          while True:
              message = ws.recieve()
              ws.send(message)
+         ws.close()
     return
          #msg = ws.recieve()
          #data = json.loads(msg)
