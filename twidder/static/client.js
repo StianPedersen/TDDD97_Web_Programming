@@ -38,7 +38,8 @@ function connect_socket()
     console.log('Server: ' + e.data);
     if(e.data == 'Logout')
     {
-      logOut();
+      localStorage.removeItem('token');
+      displayView();
     }
   };
 
@@ -83,6 +84,8 @@ function sendMessage(msg, email, div_id){
       if(request.status == 200)
       {
           document.getElementById("output").innerHTML = "<h3>Message posted!</h3>"
+          document.getElementById("searchmsg").value='';
+          document.getElementById("msg").value='';
           printWall(messages.toEmail, div_id);
       }
       else if(request.status == 400)

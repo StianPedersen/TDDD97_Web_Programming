@@ -8,7 +8,7 @@ import random
 
 app = Flask(__name__)
 sock = Sock(app)
-sockets = {}
+sockets = dict()
 
 @app.teardown_request
 def after_request(exception):
@@ -25,11 +25,11 @@ def echo(sock):
     email = data_handler.tokenToEmail(token)
 
     if email in sockets:
-         sockets[email].send('Logout')
-         sockets[email].close()
-         sockets[email]=sock;
+        sockets[email].send('Logout')
+        del sockets[email]
+        sockets[email]=sock
     else:
-        sockets[email]=sock;
+        sockets[email]=sock
         sock.send('Socket has been saved')
     for f in sockets:
         print(f)
@@ -95,6 +95,8 @@ def signUp():
 def signOut():
     token=request.headers.get('Authorization')
     if data_handler.check_if_loggedin(token):
+        email = data_handler.tokenToEmail(token)
+        del sockets[email]
         if data_handler.remove_loggedinuser(token):
             return "{}", 200
         else:
