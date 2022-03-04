@@ -25,7 +25,6 @@ function connect_socket()
   console.log("trying to connect");
   var connection = new WebSocket("ws://"+ document.domain + ":5000/echo");
 
-
   connection.onopen = function()
   {
     console.log('connection open');
