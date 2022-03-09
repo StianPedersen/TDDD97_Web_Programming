@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request, make_response, render_template
 from flask_sock import Sock
+from flask_mail import Mail, Message
 import data_handler
 import random
 
@@ -9,13 +10,22 @@ import random
 app = Flask(__name__)
 sock = Sock(app)
 sockets = dict()
-
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'theqkk@gmail.com'
+app.config['MAIL_PASSWORD'] = 'felixnyrfors'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 @app.teardown_request
 def after_request(exception):
     data_handler.disconnect_db()
 
 @app.route("/")
 def root():
+    msg = Message('Hello', sender = 'theqkk@gmail.com', recipients = ['felixnyrfors@gmail.com'])
+    msg.body = "This is the email body"
+    mail.send(msg)
     return render_template("client.html")
 
 

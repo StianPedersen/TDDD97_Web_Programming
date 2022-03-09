@@ -12,7 +12,6 @@ displayView = function() {
   }
   else {
     myScript = document.getElementById("WelcomeScript");
-
     myDiv.innerHTML = myScript.innerHTML;
   }
 };
@@ -218,6 +217,11 @@ signUpValidation = function(DataObject){
 }
 }
 
+recoverPassword = function(email){
+console.log(email.value);
+let request = new XMLHttpRequest();
+}
+
 signInValidation = function(email, password){
   let request = new XMLHttpRequest();
   request.open("POST", "/user/post/signIn" , true);
@@ -229,22 +233,20 @@ signInValidation = function(email, password){
   request.onreadystatechange = function(){
     if(request.readyState == 4){
       if(request.status == 201){
-        document.getElementById("output").innerHTML = "<h3>Signed in!</h3>"
         token = request.getResponseHeader('Authorization');
-
         localStorage.setItem("token", token);
         connect_socket();
         displayView();
       }
       else if(request.status == 400){
-        document.getElementById("output").innerHTML = "<h3>Email or password is missing!</h3>"
+        document.getElementById("front_pic").innerHTML = "<h3>Email or password is missing!</h3>"
       }
       else if(request.status == 401){
-        document.getElementById("output").innerHTML = "<h3>Wrong email or password!</h3>"
+        document.getElementById("front_pic").innerHTML = "<h3>Wrong email or password!</h3>"
       }
 
       else if(request.status == 500){
-        document.getElementById("output").innerHTML = "<h3>Ops! Something serious went wrong!</h3>"
+        document.getElementById("front_pic").innerHTML = "<h3>Ops! Something serious went wrong!</h3>"
       }
     }
   }
