@@ -1,22 +1,30 @@
 .grid-container{
   display: grid;
   grid-gap: 10px 10px;
-  grid-template-columns: 340px 250px;
+  grid-template-columns: 150px 340px 250px;
   grid-template-rows: 100px 300px;
 
   padding-top: 100px;
   justify-content: center;
 }
 
+.item0{
+  grid-row: 1/3;
+  grid-column: 1;
+  border: solid black 1px;
+  
+
+}
 .item1{
 grid-row: 1/3;
+grid-column: 2/3;
 border: solid black 1px;
-background-image: url('wimage.png');
+background-image: url('pictures/wimage.png');
 }
 
 .item2{
 grid-row: 1;
-grid-column: 2/3;
+grid-column: 3/3;
 border: solid black 1px;
 
 padding-top: 2vh;
@@ -24,8 +32,15 @@ padding-top: 2vh;
 
 .item3{
 grid-row: 2/3;
-grid-column: 2/3;
+grid-column: 3/3;
 border: solid black 1px;
+}
+
+.picture-box{
+  width:145px;
+  height:50px;
+  margin-bottom: 10px;
+  position:center;
 }
 
 .left-home{

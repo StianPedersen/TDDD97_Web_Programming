@@ -12,6 +12,7 @@ displayView = function() {
   }
   else {
     myScript = document.getElementById("WelcomeScript");
+
     myDiv.innerHTML = myScript.innerHTML;
   }
 };
@@ -173,7 +174,6 @@ function logOut(){
  request.send(null);
 }
 
-
 signUpValidation = function(DataObject){
   if(DataObject.password1.value == DataObject.password2.value)
   {
@@ -331,7 +331,6 @@ printInfo = function(email, div_id){
   request.send(null);
 }
 
-
 printWall = function(email, div_id){
   let div=document.getElementById(div_id);
   div.innerHTML = "";
@@ -365,4 +364,29 @@ printWall = function(email, div_id){
     }
   }
   request.send(null);
+}
+
+
+function allowDrop(ev) {
+  ev.preventDefault();
+
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData("text");
+  var nodeCopy = document.getElementById(data).cloneNode(true);
+  var node = document.getElementById("front_pic");
+  if(node.hasChildNodes())
+  {
+    while(node.firstChild){
+      node.removeChild(node.lastChild);
+    }
+  }
+  nodeCopy.id = "newId";
+  node.appendChild(nodeCopy);
 }
