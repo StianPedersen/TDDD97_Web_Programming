@@ -3,7 +3,7 @@ from flask_sock import Sock
 from flask_mail import Mail, Message
 import data_handler
 import random
-
+from autolink import linkify
 #from twidder import app
 
 
@@ -12,22 +12,24 @@ sock = Sock(app)
 sockets = dict()
 app.config['MAIL_SERVER']='smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'theqkk@gmail.com'
+app.config['MAIL_USERNAME'] = 'stianprogg@gmail.com'
 app.config['MAIL_PASSWORD'] = 'felixnyrfors'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
+
 @app.teardown_request
 def after_request(exception):
     data_handler.disconnect_db()
 
 @app.route("/")
 def root():
-    msg = Message('Hello', sender = 'theqkk@gmail.com', recipients = ['felixnyrfors@gmail.com'])
-    msg.body = "This is the email body"
-    mail.send(msg)
     return render_template("client.html")
 
+@app.route("/recoverPass/<token>")
+def recover(token):
+    
+    return render_template("recovery.html")
 
 @sock.route('/echo')
 def echo(sock):
@@ -46,6 +48,27 @@ def echo(sock):
     while True:
         data = sock.receive()
         sock.send(data)
+
+@app.route("/sendLink", methods = ['POST'])
+def sendLink():
+    json=request.get_json()
+    if "Email" in json:
+        msg = Message('Hello', sender = 'stianprogg@gmail.com', recipients = [json["Email"]])
+        letters = "abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+        RecoverToken = "";
+        for i in range(10):
+            RecoverToken += letters[random.randint(0,len(letters)-1)]
+        if data_handler.check_user(json["Email"]):
+            if data_handler.create_recovery(RecoverToken, json["Email"]):
+                msg.html = linkify('127.0.0.1:5000/recoverPass/'+RecoverToken)
+                mail.send(msg)
+                return "{}", 200
+            else:
+                return "{}", 500
+        else:
+            return "{}", 400
+    else:
+        return "{}", 404
 
 
 @app.route('/user/post/signIn', methods = ['POST'])

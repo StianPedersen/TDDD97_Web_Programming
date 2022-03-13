@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+  <head>
+    <title>
+      Twidder
+    </title>
+    <link rel="shortcut icon" href="../static/pictures/favicon.png" />
+    <link href="static/client.css" type="text/css" rel="stylesheet" />
+    <script src="static/client.js" type="text/javascript"></script>
+    <div class="medium-div">
+      <form>
+          <accounttext>Old password</accounttext>
+          <input type="password" id="oldPassword" name="oldPassword" class="account-box" required></input>
+          <accounttext>New password</accounttext>
+          <input type="password" id="newPassword1" name="newPassword1" minlength="2" class="account-box" required></input>
+
+          <accounttext>Repeat new password</accounttext>
+          <input type="password" id="newPassword2" name="newPassword2" class="account-box" required></input>
+
+          <button onclick="changePassword(oldPassword,newPassword1,newPassword2); return false;" class="btn-account">Change password</input>
+      </form>
+    </div>
+    </head>

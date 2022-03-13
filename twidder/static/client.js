@@ -192,11 +192,9 @@ signUpValidation = function(DataObject){
     request.onreadystatechange = function(){
       if(request.readyState == 4){
         if(request.status == 201){
-          document.getElementById("output").innerHTML = "<h3>User created!</h3>"
           token = request.getResponseHeader('Authorization');
           localStorage.setItem("token", token);
           signInValidation(DataObject.sign_up_email, DataObject.password1);
-          //displayView();
         }
         else if(request.status == 400){
           document.getElementById("output").innerHTML = "<h3>Ops!!</h3>"
@@ -218,8 +216,27 @@ signUpValidation = function(DataObject){
 }
 
 recoverPassword = function(email){
-console.log(email.value);
-let request = new XMLHttpRequest();
+  let request = new XMLHttpRequest();
+  request.open("POST", "/sendLink", true);
+  request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+  let messages = {
+    Email: email.value
+  }
+  request.onreadystatechange = function(){
+    if(request.readyState == 4){
+      if(request.status == 200)
+      {
+
+      }
+      else if(request.status == 404)
+      {
+
+      }
+    }
+
+  }
+  request.send(JSON.stringify(messages));
+
 }
 
 signInValidation = function(email, password){

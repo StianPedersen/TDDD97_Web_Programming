@@ -1,6 +1,7 @@
--- drop table user;
--- drop table loggedInUsers;
--- drop table messages;
+ drop table user;
+ drop table loggedInUsers;
+ drop table messages;
+ drop table recovery;
 
 create table user(email varchar(100),
                 password varchar(100),
@@ -13,4 +14,6 @@ create table user(email varchar(100),
 
 create table loggedInUsers(token varchar(100), email varchar(100) references user(email), primary key(token));
 
-create table messages(fromEmail varchar(100),toEmail varchar(100) references user(email), message varchar(200))
+create table messages(fromEmail varchar(100), toEmail varchar(100) references user(email), message varchar(200));
+
+create table recovery(Rtoken varchar(100), email varchar(100) references user(email));

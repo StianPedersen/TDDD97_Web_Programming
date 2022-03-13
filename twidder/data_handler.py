@@ -29,6 +29,14 @@ def get_password(email):
     cursor.close()
     return rows[0][0]
 
+def create_recovery(Rtoken, email):
+    try:
+        get_db().execute("insert into recovery values(?,?)", [Rtoken, email])
+        get_db().commit()
+        return True
+    except:
+        return False
+
 def create_user(email, password, firstname, familyname, gender, city, country):
     try:
         get_db().execute("insert into user values(?,?,?,?,?,?,?)",
