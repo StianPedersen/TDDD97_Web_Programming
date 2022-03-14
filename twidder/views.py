@@ -28,7 +28,6 @@ def root():
 
 @app.route("/recoverPass/<token>")
 def recover(token):
-    
     return render_template("recovery.html")
 
 @sock.route('/echo')
@@ -60,7 +59,7 @@ def sendLink():
             RecoverToken += letters[random.randint(0,len(letters)-1)]
         if data_handler.check_user(json["Email"]):
             if data_handler.create_recovery(RecoverToken, json["Email"]):
-                msg.html = linkify('127.0.0.1:5000/recoverPass/'+RecoverToken)
+                msg.html = linkify('127.0.0.1:5000/recoverPass/Rtoken='+RecoverToken)
                 mail.send(msg)
                 return "{}", 200
             else:
@@ -175,6 +174,19 @@ def change_password():
                 return  "{}", 500
         return "{}", 400
     return "{}", 401
+
+@app.route('/user/put/change_password_recovery', methods = ['PUT'])
+def change_password_recovery():
+        json=request.get_json()
+        print(json['Rtoken'])
+        if data_handler.check_recovery_token(json['Rtoken']):
+            if data_handler.change_password_recovery(json['newPassword'],json['Rtoken']):
+                data_handler.delete_recovery_token(json['Rtoken'])
+                return "{}", 200
+            else:
+                return "{}", 500
+        else:
+            return "{}", 401
 
 @app.route('/user/post/post_message', methods = ['POST'])
 def post_message():

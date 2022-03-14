@@ -219,24 +219,30 @@ recoverPassword = function(email){
   let request = new XMLHttpRequest();
   request.open("POST", "/sendLink", true);
   request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  let messages = {
+  let data = {
     Email: email.value
   }
   request.onreadystatechange = function(){
     if(request.readyState == 4){
       if(request.status == 200)
       {
-
+        document.getElementById("front_pic").innerHTML = "<h3>You have recieved an recovery email</h3>"
+      }
+      else if(request.status == 400)
+      {
+        document.getElementById("front_pic").innerHTML = "<h3>User does not exist!</h3>"
       }
       else if(request.status == 404)
       {
-
+        document.getElementById("front_pic").innerHTML = "<h3>need email!</h3>"
+      }
+      else if(request.status == 500)
+      {
+        document.getElementById("front_pic").innerHTML = "<h3>Something serious went wrong!</h3>"
       }
     }
-
   }
-  request.send(JSON.stringify(messages));
-
+  request.send(JSON.stringify(data));
 }
 
 signInValidation = function(email, password){
@@ -311,6 +317,7 @@ changePassword = function(oldPassword,newPassword1,newPassword2){
       request.send(JSON.stringify(password_change));
     }
 }
+
 
 printInfo = function(email, div_id){
   let div=document.getElementById(div_id);

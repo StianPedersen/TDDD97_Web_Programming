@@ -104,6 +104,31 @@ def change_password(newPassword, token):
      except:
          return False
 
+def change_password_recovery(newPassword, recovery_token):
+    try:
+        get_db().execute("update user set password = ? where email = (select email from recovery where Rtoken = ?)", [newPassword, recovery_token])
+        get_db().commit()
+        return True
+    except:
+         return False
+
+def delete_recovery_token(recovery_token):
+    try:
+        get_db().execute("delete from recovery where Rtoken = ?",[recovery_token])
+        get_db().commit()
+        return True
+    except:
+        return False
+
+def check_recovery_token(recovery_token):
+    try:
+        cursor = get_db().execute("select count(1) from recovery where Rtoken = ?",[recovery_token])
+        rows = cursor.fetchall()
+        cursor.close()
+        return rows[0][0]
+    except:
+        return None
+
 def create_message(fromEmail, toEmail, message):
     try:
         get_db().execute("insert into messages values(?,?,?)", [fromEmail, toEmail, message])
