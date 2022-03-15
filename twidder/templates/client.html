@@ -158,16 +158,16 @@
           <div id="Account" class="tabcontent">
             <h2>Account</h2>
             <div class="medium-div">
-              <form>
+              <form onsubmit="changePassword(oldPassword,newPassword1,newPassword2); return false;">
                   <accounttext>Old password</accounttext>
                   <input type="password" id="oldPassword" name="oldPassword" class="account-box" required></input>
                   <accounttext>New password</accounttext>
                   <input type="password" id="newPassword1" name="newPassword1" minlength="2" class="account-box" required></input>
 
                   <accounttext>Repeat new password</accounttext>
-                  <input type="password" id="newPassword2" name="newPassword2" class="account-box" required></input>
+                  <input type="password" oninput="passwordCheck(password1, this)" id="newPassword2" name="newPassword2" class="account-box" required></input>
 
-                  <button onclick="changePassword(oldPassword,newPassword1,newPassword2); return false;" class="btn-account">Change password</input>
+                  <input type = "submit" value = "Change password" class="btn-account"></input>
               </form>
             </div>
             <button onclick="logOut()">Logout </button>

@@ -6,15 +6,17 @@
     <link rel="shortcut icon" href="../static/pictures/favicon.png" />
     <link href="../static/client.css" type="text/css" rel="stylesheet" />
     <script src="../static/recovery.js" type="text/javascript"></script>
-    <div class="medium-div" id="output">
-      <form>
 
-          <accounttext>New password</accounttext>
-          <input type="password" id="newPassword1" name="newPassword1" minlength="2" class="account-box" required></input>
-          <accounttext>Repeat new password</accounttext>
-          <input type="password" id="newPassword2" name="newPassword2" class="account-box" required></input>
-
-          <button onclick="changePasswordRecovery(newPassword1,newPassword2); return false;" class="btn-account">Change password</input>
+    <div class="medium-div">
+      <div class="" id="output"/>
+      <form onsubmit="changePasswordRecovery(password1,password2); return false;">
+        <pretext  for="password1">Password</pretext>
+        <input type="password" id="password1" minlength="2" name="password1" class="account-box" required></input>
+        <pretext for="password2">Repeat PSW</pretext>
+        <input type="password" oninput="passwordCheck(password1,this)" id="password2" name="password2" class="account-box" required></input>
+        <input type="submit" value="change" class="btn-account"></input >
       </form>
     </div>
+
+
     </head>

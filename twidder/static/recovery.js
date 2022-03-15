@@ -43,3 +43,14 @@ changePasswordRecovery = function (newPassword1,newPassword2){
     request.send(JSON.stringify(password_change));
   }
 }
+function passwordCheck(password1, password2) {
+  if(password1.value != password2.value)
+  {
+    password2.setCustomValidity('Passwords must match');
+    return false;
+  }
+  else {
+   password2.setCustomValidity('');
+   return true;
+  }
+}
